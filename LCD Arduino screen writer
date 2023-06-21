@@ -1,0 +1,74 @@
+#include <LiquidCrystal.h>
+
+const int rs = 7, e = 8, d4 = 9, d5 = 10, d6 = 11, d7 = 12;
+int buttonpin = 13;
+int spacebar = 5;
+int spacebarstate = 0;
+
+int cursorscroll = 6;
+int scrollbuttonstate = 0;
+
+int state = 0;
+char counter = 'a';
+int pressed;
+
+int deletecharacter = 4;
+int deletecharstate = 0;
+
+int x;
+int scrollcounter = 0;
+LiquidCrystal lcd(rs, e, d4, d5, d6, d7);
+
+void setup() {
+  Serial.begin(9600);
+  lcd.begin(16, 2);
+  pinMode(buttonpin, INPUT);
+  pinMode(cursorscroll, INPUT);
+  pinMode(spacebar, INPUT);
+  pinMode(deletecharacter, INPUT);
+}
+
+void loop() {
+  
+  delay(200);
+  state = digitalRead(buttonpin);
+  lcd.setCursor(x,0);
+  
+  scrollbuttonstate = digitalRead(cursorscroll);
+                                              
+  if (scrollbuttonstate == 1){
+    x = scrollcounter++;
+    if (x >= 16){       
+      scrollcounter = 0;
+    }
+  }
+  
+  spacebarstate = digitalRead(spacebar);
+  if (spacebarstate == 1){
+    lcd.setCursor(x+1,0);
+    lcd.print(" ");
+    x++;
+    x++;
+    scrollcounter++;
+    scrollcounter++;
+  }
+                                  
+  if (state == 1){
+    pressed = counter++;
+    if (counter > 'z'){
+      counter = 'a';
+    }
+  }
+
+  deletecharstate = digitalRead(deletecharacter);
+  if (deletecharstate == 1){
+    lcd.setCursor(x-1,0);
+       
+    x--;
+    scrollcounter--;
+  }  
+  
+  lcd.print(counter);
+  lcd.print(" ");
+  
+}
