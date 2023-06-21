@@ -1,0 +1,172 @@
+import tkinter as tk
+import logging
+
+logger=tk.Tk()
+logger.geometry("400x400")
+logger.resizable(False, False)
+logger.title("Logger")
+
+class logdata():
+    logging.basicConfig(filename="mylogger.log", level=logging.INFO, format="%(asctime)-5s %(message)s\n")
+
+class GUI(tk.Canvas):
+
+    mycanvas = tk.Canvas(logger, bg="light grey", width=400, height=400)
+    mycanvas.pack()
+
+    usernamelabel = tk.Label(mycanvas, text="Enter username:", bg="light grey", font=("Calibri", 14))
+    usernamelabel.place(x=200, y=20, anchor="center")
+
+    emaillabel = tk.Label(mycanvas, text="Enter email:", bg="light grey", font=("Calibri", 14))
+    emaillabel.place(x=200, y=80, anchor="center")
+
+    passwordlabel = tk.Label(mycanvas, text = "Enter password:",bg = "light grey", font = ("Calibri", 14))
+    passwordlabel.place(x = 200, y = 140, anchor = "center")
+
+    def __init__(self):
+
+        self.usvar = tk.StringVar()
+        self.evar = tk.StringVar()
+        self.pvar = tk.StringVar()
+
+        self.password = tk.Entry(self.mycanvas, width=20, fg="black", font=("Calibri", 12), textvariable=self.pvar)
+        self.username = tk.Entry(self.mycanvas, width=20, fg="black", font=("Calibri", 12), textvariable=self.usvar)
+        self.email = tk.Entry(self.mycanvas, width=20, fg="black", font=("Calibri", 12), textvariable=self.evar)
+
+        self.username.place(anchor="center", x=200, y=50)
+        self.email.place(x = 200, y = 110, anchor = "center")
+        self.password.place(anchor = "center", x = 200 , y = 170)
+        self.password.config(show="X")
+
+        self.forget_label = tk.Label(self.mycanvas, text="You forgot a field!", bg="light grey", fg="red",
+                                            font=("Times new", 12))
+
+        def show_pass():
+            if self.password.config(show = "X") == self.password.config(show = "X"):
+                self.password.config(show = "")
+
+        checkbox = tk.Checkbutton(self.mycanvas, text="Show password", bg="light grey", command=show_pass,
+                                  activebackground="light grey")
+        checkbox.place(x=200, y=195, anchor="center")
+
+        def forgotlabel(function):
+            def wrapper():
+
+                forgotemail = self.email.get()
+                forgotusername = self.username.get()
+                forgotpassword = self.password.get()
+
+                if forgotemail == "":
+                    self.email.config(background="light yellow")
+
+                if forgotusername == "":
+                    self.username.config(background="light yellow")
+
+                if forgotpassword == "":
+                    self.password.config(background = "light yellow")
+
+                def logged_in():
+
+                    if forgotemail and forgotusername and forgotpassword:
+                    
+                        for x in self.username,self.password,self.email:
+                            x.config(state = "disabled")
+
+                        if x.config(state = "disabled") == x.config(state = "disabled"):
+                            log_in.config(state = "disabled")
+
+                        self.forget_label.place_forget()
+
+                        logging.info("EMAIL: {}".format(forgotemail))
+                        logging.info("PASSWORD: {}".format(forgotpassword))
+                        logging.info("USERNAME: {}".format(forgotusername))
+
+                        logged_in = tk.Label(self.mycanvas, text="Logged in!",bg ="light grey",font =("Calibri",20),height = 1,fg = "#1F1E1C")
+                        logged_in.place(anchor = "center",x=200, y=225)
+
+                logged_in()
+
+                x = any(forgotusername)
+                if x == False:
+                    self.forget_label
+                    self.forget_label.place(x=70, y=380, anchor="center")
+
+                y = any(forgotemail)
+                if y == False:
+                    self.forget_label
+                    self.forget_label.place(x=70, y=380, anchor="center")
+
+                z = any(forgotpassword)
+                if z == False:
+                    self.forget_label
+                    self.forget_label.place(x=70, y=380, anchor="center")
+
+            return wrapper
+
+        log_in = tk.Button(self.mycanvas, text="Log in", command=forgotlabel(function=None))
+        log_in.place(x=200, y=380, anchor="center")
+
+
+class savesettings(GUI):
+    def __init__(self):
+        super().__init__()
+
+        def savesettings():
+            if len(self.usvar.get()) == 0:
+                savebutton.config(state = "disabled")
+                self.forget_label.place(anchor = "center", x = 70 , y = 380)
+
+            if len(self.evar.get()) == 0:
+                savebutton.config(state="disabled")
+                self.forget_label.place(anchor = "center",x = 70, y = 380)
+
+            if len(self.pvar.get()) == 0:
+                savebutton.config(state="disabled")
+                self.forget_label.place(anchor = "center", x = 70, y = 380)
+
+            save_p = self.password.get()
+            savepassword = save_password_label.config(text=save_p)
+
+        def show_saved_label_categories():
+            if len(self.usvar.get()) and len(self.evar.get()) and len(self.pvar.get()) > 0:
+
+                _password = tk.Label(self.mycanvas, text = "PASSWORD:", bg = "light grey", font = ("arial", 9),fg = "#002EFF")
+                _password.place(anchor = "center", x = 200, y = 260)
+
+        savebutton = tk.Button(text="Save settings", command=lambda :(savesettings(), show_saved_label_categories()), state="disabled")
+        savebutton.place(anchor="center", x=200, y=350)
+
+        def enablesavebutton():
+
+            if len(self.usvar.get()) > 0:
+                if len(self.evar.get()) > 0:
+                    if len(self.pvar.get()) > 0:
+                        savebutton.config(state="active")
+                        return self.forget_label.place_forget()
+
+        save_password_label = tk.Label(text="", bg="light grey", font=("new times", 11))
+        save_password_label.place(anchor = "center",x = 200, y =280)
+
+        save_enable = tk.Button(self.mycanvas, text="Click to enable setting saving", command=enablesavebutton, bd=1,
+                                relief=tk.RIDGE, bg="light yellow")
+        save_enable.place(anchor="center", x=200, y=320)
+
+        def character_limit(*args):
+            if len(self.usvar.get()) > 0:
+                self.usvar.set(self.usvar.get()[:20])
+
+            if len(self.evar.get()) > 0:
+                self.evar.set(self.evar.get()[:20])
+
+            if len(self.pvar.get()) > 0:
+                self.pvar.set(self.pvar.get()[:20])
+
+        self.usvar.trace("w",lambda *args: character_limit(self.usvar.get))
+        self.evar.trace("w", lambda *args: character_limit(self.evar.get))
+        self.pvar.trace("w", lambda *args: character_limit(self.pvar.get))
+
+if __name__ == '__main__':
+    logdata()
+    GUI()
+    savesettings()
+    logger.mainloop()
